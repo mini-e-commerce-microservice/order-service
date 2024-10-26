@@ -1,0 +1,8 @@
+openapi: 3.0.1
+info:
+  contact: {}
+  title: user service api
+  version: 1.0.0
+servers:
+  - url: http://localhost:3003
+paths:
