@@ -6,3 +6,164 @@ info:
 servers:
   - url: http://localhost:3003
 paths:
+  /v1/orders:
+    post:
+      operationId: V1OrderPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/V1OrderPost'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1OrderResponse200'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '500':
+          description: INTERNAL SERVER ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: NOT FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - orders
+components:
+  schemas:
+    V1OrderPost:
+      type: object
+      properties:
+        payment_method_code:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: "oneof='GP' 'QR' 'SP'"
+        shipping_address_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            validate: "required"
+        courier_code:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: "required"
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/V1OrderPostItem'
+          x-oapi-codegen-extra-tags:
+            validate: "required,min=1,dive"
+      required:
+        - payment_method_code
+        - shipping_address_id
+        - courier_code
+        - items
+    V1OrderPostItem:
+      type: object
+      properties:
+        product_item_id:
+          type: integer
+          format: int64
+          x-oapi-codegen-extra-tags:
+            validate: "required"
+        qty:
+          type: integer
+          format: int32
+          x-oapi-codegen-extra-tags:
+            validate: "required,min=1"
+      required:
+        - product_item_id
+        - qty
+    V1OrderResponse200:
+      type: object
+      properties:
+        order_id:
+          type: integer
+          format: int64
+      required:
+        - order_id
+    FileUploadRequest:
+      type: object
+      properties:
+        checksum_sha256:
+          type: string
+          description: sha256 checksum file
+          x-oapi-codegen-extra-tags:
+            binding: required
+        identifier:
+          type: string
+          description: identifier
+          x-oapi-codegen-extra-tags:
+            binding: required
+        mime_type:
+          type: string
+          description: 'common mime type: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types'
+          x-oapi-codegen-extra-tags:
+            binding: required
+        original_filename:
+          type: string
+          description: original filename
+          x-oapi-codegen-extra-tags:
+            binding: required
+        size:
+          type: integer
+          format: int64
+          description: sizes in bytes
+          x-oapi-codegen-extra-tags:
+            binding: required
+      required:
+        - checksum_sha256
+        - identifier
+        - mime_type
+        - original_filename
+        - size
+    FileUploadResponse:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: identifier response from request
+        upload_expired_at:
+          type: string
+          format: date-time
+        upload_url:
+          type: string
+        minio_form_data:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - identifier
+        - upload_expired_at
+        - upload_url
+        - minio_form_data
+    Error400:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      required:
+        - errors
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message

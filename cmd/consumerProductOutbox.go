@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"order-service/internal/conf"
 	"order-service/internal/infra"
-	"order-service/internal/repositories/product_item"
+	"order-service/internal/repositories/product_items"
 	"order-service/internal/services/cdc"
 	"os/signal"
 	"syscall"
@@ -28,7 +28,7 @@ var consumerProductOutbox = &cobra.Command{
 		pgdb, pgdbCloseFn := infra.NewPostgresql(appConf.DatabaseDsn)
 		rdbms := wsqlx.NewRdbms(pgdb)
 
-		productItemRepository := product_item.New(rdbms)
+		productItemRepository := product_items.New(rdbms)
 		cdcService := cdc.New(kafkaBroker, kafkaConf, rdbms, productItemRepository)
 
 		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)

@@ -1,3 +1,7 @@
 package order
 
-type Service interface{}
+import "context"
+
+type Service interface {
+	CreateOrder(ctx context.Context, input CreateOrderInput) (output CreateOrderOutput, err error)
+}

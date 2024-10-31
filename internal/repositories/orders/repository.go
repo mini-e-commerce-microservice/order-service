@@ -1,13 +1,9 @@
-package product_item
+package orders
 
 import (
 	"github.com/Masterminds/squirrel"
 	wsqlx "github.com/SyaibanAhmadRamadhan/sqlx-wrapper"
 )
-
-type AggregateType string
-
-const AggregateTypeProduct AggregateType = "aggregate_product"
 
 type repository struct {
 	rdbms wsqlx.Rdbms

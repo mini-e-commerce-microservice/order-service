@@ -1,4 +1,4 @@
-package product_item
+package product_items
 
 import (
 	"context"

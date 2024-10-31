@@ -15,7 +15,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 	"order-service/internal/models"
-	"order-service/internal/repositories/product_item"
+	"order-service/internal/repositories/product_items"
 )
 
 func (c *cdc) ConsumerProductOutboxData(ctx context.Context) (err error) {
@@ -57,7 +57,7 @@ func (c *cdc) ConsumerProductOutboxData(ctx context.Context) (err error) {
 		case debezium.Create, debezium.Update:
 			err = c.dbTransaction.DoTxContext(ctxConsumer, &sql.TxOptions{Isolation: sql.LevelReadCommitted, ReadOnly: false},
 				func(ctx context.Context, tx wsqlx.Rdbms) (err error) {
-					err = c.productItemRepository.UpSert(ctx, product_item.UpSertInput{
+					err = c.productItemRepository.UpSert(ctx, product_items.UpSertInput{
 						Tx:   tx,
 						Data: productItem,
 					})

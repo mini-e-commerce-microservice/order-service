@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package jwt_claims_proto;
+
+option go_package = "generated/proto/jwt_claims_proto";
+
+message JwtOtpActivationEmailClaims {
+  int64 user_id = 1;
+  string email = 2;
+  bool is_verified = 3;
+}
+
+message JwtAuthAccessTokenClaims {
+  int64 user_id = 1;
+  string email = 2;
+  int64 register_as = 3;
+  bool is_email_verified = 4;
+}
+
+message JwtAuthRefreshTokenClaims {
+  string uid = 1;
+  int64 user_id = 2;
+}
+
+
+message JwtClaims {
+  oneof data {
+    JwtOtpActivationEmailClaims otp_activation_email_claims = 1;
+    JwtAuthAccessTokenClaims auth_access_token_claims = 2;
+    JwtAuthRefreshTokenClaims auth_refresh_token_claims = 3;
+  }
+}

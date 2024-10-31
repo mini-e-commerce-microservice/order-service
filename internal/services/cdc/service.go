@@ -6,7 +6,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 	"order-service/generated/proto/secret_proto"
-	"order-service/internal/repositories/product_item"
+	"order-service/internal/repositories/product_items"
 )
 
 type cdc struct {
@@ -14,10 +14,10 @@ type cdc struct {
 	kafkaConf             *secret_proto.Kafka
 	propagators           propagation.TextMapPropagator
 	dbTransaction         wsqlx.Tx
-	productItemRepository product_item.Repository
+	productItemRepository product_items.Repository
 }
 
-func New(kafkaBroker ekafka.KafkaPubSub, kafkaConf *secret_proto.Kafka, dbTransaction wsqlx.Tx, productItemRepository product_item.Repository) *cdc {
+func New(kafkaBroker ekafka.KafkaPubSub, kafkaConf *secret_proto.Kafka, dbTransaction wsqlx.Tx, productItemRepository product_items.Repository) *cdc {
 	return &cdc{
 		propagators:           otel.GetTextMapPropagator(),
 		kafkaBroker:           kafkaBroker,
