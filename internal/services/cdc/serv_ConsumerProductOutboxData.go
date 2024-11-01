@@ -40,7 +40,7 @@ func (c *cdc) ConsumerProductOutboxData(ctx context.Context) (err error) {
 		carrier := ekafka.NewMsgCarrier(&msg)
 		ctxConsumer := c.propagators.Extract(context.Background(), carrier)
 
-		ctxConsumer, span := otel.Tracer("").Start(ctxConsumer, string(data.Payload.Op)+" process cdc user data from user service.",
+		ctxConsumer, span := otel.Tracer("").Start(ctxConsumer, string(data.Payload.Op)+" process cdc product item data from user service.",
 			trace.WithAttributes(
 				attribute.String("cdc.debezium.payload.op", string(data.Payload.Op)),
 				attribute.Int64("cdc.debezium.payload.data.id", data.Payload.ID),
