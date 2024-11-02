@@ -13,10 +13,17 @@ func (r *repository) Creates(ctx context.Context, input CreatesInput) (err error
 		return collection.Err(repositories.ErrTxIsNil)
 	}
 
-	columns := []string{"order_id", "product_item_id", "qty", "unit_price", "total_price", "discount"}
+	columns := []string{
+		"order_id", "product_item_id", "qty", "unit_price", "total_price", "discount",
+		"name", "description", "weight", "package_length", "package_width", "package_height", "dimensional_weight",
+	}
 	query := r.sq.Insert("order_items").Columns(columns...)
 	for _, item := range input.Items {
-		query = query.Values(input.OrderID, item.ProductItemID, item.Qty, item.UnitPrice, item.TotalPrice, item.Discount)
+		query = query.Values(
+			input.OrderID, item.ProductItemID, item.Qty, item.UnitPrice, item.TotalPrice, item.Discount,
+			item.Name, item.Description, item.Weight, item.PackageLength, item.PackageWidth, item.PackageHeight,
+			item.DimensionalWeight,
+		)
 	}
 
 	_, err = input.Tx.ExecSq(ctx, query)

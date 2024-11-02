@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"order-service/internal/conf"
 	"order-service/internal/infra"
-	"order-service/internal/presentation"
+	"order-service/internal/presentations"
 	"order-service/internal/repositories/order_items"
 	"order-service/internal/repositories/orders"
 	"order-service/internal/repositories/outbox_events"
@@ -45,7 +45,7 @@ var restApi = &cobra.Command{
 			SagaStateRepository:   sagaStateRepository,
 		})
 
-		server := presentation.New(&presentation.Presenter{
+		server := presentations.New(&presentations.Presenter{
 			Port:               int(appConf.AppPort),
 			JwtAccessTokenConf: jwtConf.AccessToken,
 			OrderService:       orderService,

@@ -1,4 +1,4 @@
-package presentation
+package presentations
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/cors"
 	"net/http"
 	"order-service/generated/proto/secret_proto"
-	"order-service/internal/presentation/handler"
+	"order-service/internal/presentations/handler"
 	"order-service/internal/services/order"
 	"time"
 )

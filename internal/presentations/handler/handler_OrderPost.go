@@ -27,11 +27,12 @@ func (h *handler) OrderPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	createOrderOutput, err := h.serv.orderService.CreateOrder(r.Context(), order.CreateOrderInput{
-		UserID:            userData.UserId,
-		ShippingAddressID: req.ShippingAddressId,
-		CourierCode:       req.CourierCode,
-		PaymentMethodCode: req.PaymentMethodCode,
-		Items:             createOrderInputItem,
+		UserID:             userData.UserId,
+		ShippingAddressID:  req.ShippingAddressId,
+		CourierServiceCode: req.CourierServiceCode,
+		CourierCode:        req.CourierCode,
+		PaymentMethodCode:  req.PaymentMethodCode,
+		Items:              createOrderInputItem,
 	})
 	if err != nil {
 		switch {

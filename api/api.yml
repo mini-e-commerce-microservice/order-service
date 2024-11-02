@@ -54,8 +54,12 @@ components:
           type: integer
           format: int64
           x-oapi-codegen-extra-tags:
-            validate: "required"
+            validate: "required,min=1"
         courier_code:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: "required"
+        courier_service_code:
           type: string
           x-oapi-codegen-extra-tags:
             validate: "required"
@@ -68,6 +72,7 @@ components:
       required:
         - payment_method_code
         - shipping_address_id
+        - courier_service_code
         - courier_code
         - items
     V1OrderPostItem:

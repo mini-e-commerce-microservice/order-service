@@ -7,6 +7,7 @@ import (
 	"github.com/SyaibanAhmadRamadhan/go-collection"
 	"github.com/SyaibanAhmadRamadhan/go-collection/generic"
 	wsqlx "github.com/SyaibanAhmadRamadhan/sqlx-wrapper"
+	"github.com/guregu/null/v5"
 	"golang.org/x/sync/errgroup"
 	"order-service/internal/models"
 	"order-service/internal/repositories/order_items"
@@ -25,7 +26,8 @@ func (s *service) CreateOrder(ctx context.Context, input CreateOrderInput) (outp
 	}, generic.WithUnique(true))
 
 	totalProductItem, err := s.productItemRepository.Count(ctx, product_items.CountInput{
-		IDs: productItemIDs,
+		IDs:      productItemIDs,
+		IsActive: null.BoolFrom(true),
 	})
 	if err != nil {
 		return output, collection.Err(err)
@@ -60,16 +62,40 @@ func (s *service) CreateOrder(ctx context.Context, input CreateOrderInput) (outp
 				totalAmount += orderItemTotalPrice
 
 				orderItems = append(orderItems, models.OrderItem{
-					ProductItemID: item.ID,
-					Qty:           orderItemInput.Quantity,
-					UnitPrice:     item.Price,
-					TotalPrice:    orderItemTotalPrice,
-					Discount:      0,
+					Name:              item.Name,
+					Description:       item.Description,
+					ProductItemID:     item.ID,
+					Qty:               orderItemInput.Quantity,
+					UnitPrice:         item.Price,
+					TotalPrice:        orderItemTotalPrice,
+					Discount:          0,
+					Weight:            item.Weight,
+					PackageLength:     item.PackageLength,
+					PackageWidth:      item.PackageWidth,
+					PackageHeight:     item.PackageHeight,
+					DimensionalWeight: item.DimensionalWeight,
 				})
 			}
 
+			var eg errgroup.Group
+			eg.Go(func() (err error) {
+				for _, item := range productItemOutput.Data {
+					orderItemInput := orderItemsInputMap[item.ID]
+					err = s.productItemRepository.UpdateStock(ctx, product_items.UpdateStockInput{
+						Tx:    tx,
+						ID:    item.ID,
+						Stock: item.Stock - orderItemInput.Quantity,
+					})
+					if err != nil {
+						return collection.Err(err)
+					}
+				}
+				return
+			})
+
 			timeNow := time.Now().UTC()
 			orderCreateOutput, err := s.orderRepository.Create(ctx, orders.CreateInput{
+				Tx: tx,
 				Data: models.Order{
 					UserID:            input.UserID,
 					ShippingAddressID: input.ShippingAddressID,
@@ -88,8 +114,18 @@ func (s *service) CreateOrder(ctx context.Context, input CreateOrderInput) (outp
 			if err != nil {
 				return collection.Err(err)
 			}
+			createOrderProductPayload := models.CreateOrderProduct{
+				OrderID:              orderCreateOutput.ID,
+				UserID:               input.UserID,
+				DestinationAddressID: input.ShippingAddressID,
+				OriginAddressID:      0,
+				CourierCode:          input.CourierCode,
+				CourierServiceCode:   input.CourierServiceCode,
+				TotalAmount:          totalAmount,
+				PaymentMethodCode:    input.PaymentMethodCode,
+				Items:                orderItems,
+			}
 
-			var eg errgroup.Group
 			eg.Go(func() (err error) {
 				err = s.orderItemRepository.Creates(ctx, order_items.CreatesInput{
 					OrderID: orderCreateOutput.ID,
@@ -103,19 +139,12 @@ func (s *service) CreateOrder(ctx context.Context, input CreateOrderInput) (outp
 				return
 			})
 
-			createOrderProductPayload := models.CreateOrderProduct{
-				OrderID:           orderCreateOutput.ID,
-				UserID:            input.UserID,
-				ShippingAddressID: input.ShippingAddressID,
-				TotalAmount:       totalAmount,
-				PaymentMethodCode: input.PaymentMethodCode,
-			}
 			eg.Go(func() (err error) {
 				err = s.outboxEventRepository.Create(ctx, outbox_events.CreateInput{
 					Tx: tx,
 					Data: models.OutboxEvent{
-						Aggregatetype: string(primitive.AggregateTypeOutboxEventCourierRate),
-						Aggregateid:   fmt.Sprintf("%d", orderCreateOutput.ID),
+						AggregateType: string(primitive.AggregateTypeOutboxEventCourierRate),
+						AggregateID:   fmt.Sprintf("%d", orderCreateOutput.ID),
 						Type:          "created-order",
 						Payload:       createOrderProductPayload,
 						TraceParent:   util.GetTraceParent(ctx),
@@ -134,8 +163,8 @@ func (s *service) CreateOrder(ctx context.Context, input CreateOrderInput) (outp
 						Payload: createOrderProductPayload,
 						Status:  string(primitive.SagaStateStatusOnProcess),
 						Step: models.SagaStateCreateOrderProductStep{
-							Initiated:         "success",
-							ShippingCalculate: "on process",
+							Initiated:         string(primitive.SagaStateStatusSuccess),
+							ShippingCalculate: string(primitive.SagaStateStatusOnProcess),
 						},
 						Type:    "order placement",
 						Version: "1",
@@ -164,11 +193,12 @@ func (s *service) CreateOrder(ctx context.Context, input CreateOrderInput) (outp
 }
 
 type CreateOrderInput struct {
-	UserID            int64
-	ShippingAddressID int64
-	CourierCode       string
-	PaymentMethodCode string
-	Items             []CreateOrderInputItem
+	UserID             int64
+	ShippingAddressID  int64
+	CourierCode        string
+	CourierServiceCode string
+	PaymentMethodCode  string
+	Items              []CreateOrderInputItem
 }
 
 type CreateOrderInputItem struct {

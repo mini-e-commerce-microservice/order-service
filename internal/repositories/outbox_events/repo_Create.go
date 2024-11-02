@@ -20,7 +20,7 @@ func (r *repository) Create(ctx context.Context, input CreateInput) (err error) 
 	}
 
 	query := r.sq.Insert("outbox_events").Columns("aggregatetype", "aggregateid", "type", "payload", "trace_parent").
-		Values(input.Data.Aggregatetype, input.Data.Aggregateid, input.Data.Type, string(payloadMarshal), input.Data.TraceParent)
+		Values(input.Data.AggregateType, input.Data.AggregateID, input.Data.Type, string(payloadMarshal), input.Data.TraceParent)
 
 	_, err = input.Tx.ExecSq(ctx, query)
 	if err != nil {
