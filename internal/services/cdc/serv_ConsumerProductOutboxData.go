@@ -22,8 +22,8 @@ func (c *cdc) ConsumerProductOutboxData(ctx context.Context) (err error) {
 	output, err := c.kafkaBroker.Subscribe(ctx, ekafka.SubInput{
 		Config: kafka.ReaderConfig{
 			Brokers: []string{c.kafkaConf.Host},
-			GroupID: c.kafkaConf.Topic.ProductsvcPublicOutbox.ConsumerGroup.Ordersvc,
-			Topic:   c.kafkaConf.Topic.ProductsvcPublicOutbox.Name,
+			GroupID: c.kafkaConf.Topic.SellersvcPublicOutbox.ConsumerGroup.Ordersvc,
+			Topic:   c.kafkaConf.Topic.SellersvcPublicOutbox.Name,
 		},
 	})
 	if err != nil {

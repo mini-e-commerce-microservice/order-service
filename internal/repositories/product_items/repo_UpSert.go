@@ -12,7 +12,7 @@ func (r *repository) UpSert(ctx context.Context, input UpSertInput) (err error) 
 	if err != nil {
 		return collection.Err(err)
 	}
-	variant2Marshal, err := input.Data.Variant1.MarshalJSON()
+	variant2Marshal, err := input.Data.Variant2.MarshalJSON()
 	if err != nil {
 		return collection.Err(err)
 	}
@@ -27,6 +27,8 @@ func (r *repository) UpSert(ctx context.Context, input UpSertInput) (err error) 
 						variant_2 = EXCLUDED.variant_2,
 						sub_category_item_name = EXCLUDED.sub_category_item_name,
 						name = EXCLUDED.name,
+						user_id = EXCLUDED.user_id,
+						outlet_id = EXCLUDED.outlet_id,
 						description = EXCLUDED.description,
 						price = EXCLUDED.price,
 						stock = EXCLUDED.stock,

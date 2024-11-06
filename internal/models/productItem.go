@@ -11,6 +11,7 @@ import (
 type ProductItem struct {
 	ID                  int64                         `db:"id" json:"id"`
 	UserID              int64                         `db:"user_id" json:"user_id"`
+	OutletID            int64                         `db:"outlet_id" json:"outlet_id"`
 	Variant1            NullValue[ProductItemVariant] `db:"variant_1" json:"variant_1"`
 	Variant2            NullValue[ProductItemVariant] `db:"variant_2" json:"variant_2"`
 	SubCategoryItemName string                        `db:"sub_category_item_name" json:"sub_category_item_name"`

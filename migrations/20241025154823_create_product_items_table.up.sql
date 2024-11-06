@@ -2,6 +2,7 @@ CREATE TABLE product_items
 (
     id                     bigserial primary key,
     user_id                BIGINT         NOT NULL,
+    outlet_id              BIGINT         NOT NULL,
     variant_1              JSONB,
     variant_2              JSONB,
     sub_category_item_name VARCHAR(255),
