@@ -1,7 +1,11 @@
 package order
 
 import (
+	ekafka "github.com/SyaibanAhmadRamadhan/event-bus/kafka"
 	wsqlx "github.com/SyaibanAhmadRamadhan/sqlx-wrapper"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	"order-service/generated/proto/secret_proto"
 	"order-service/internal/repositories/order_items"
 	"order-service/internal/repositories/orders"
 	"order-service/internal/repositories/outbox_events"
@@ -16,6 +20,11 @@ type service struct {
 	orderItemRepository   order_items.Repository
 	outboxEventRepository outbox_events.Repository
 	sagaStateRepository   saga_states.Repository
+	hmacSha256Key         *secret_proto.HmacSha256Key
+
+	propagators propagation.TextMapPropagator
+	kafkaConf   *secret_proto.Kafka
+	kafkaBroker ekafka.KafkaPubSub
 }
 
 type Opt struct {
@@ -25,6 +34,10 @@ type Opt struct {
 	OrderItemRepository   order_items.Repository
 	OutboxEventRepository outbox_events.Repository
 	SagaStateRepository   saga_states.Repository
+	HmacSha256Key         *secret_proto.HmacSha256Key
+
+	KafkaConf   *secret_proto.Kafka
+	KafkaBroker ekafka.KafkaPubSub
 }
 
 func New(opt Opt) *service {
@@ -35,5 +48,10 @@ func New(opt Opt) *service {
 		orderItemRepository:   opt.OrderItemRepository,
 		outboxEventRepository: opt.OutboxEventRepository,
 		sagaStateRepository:   opt.SagaStateRepository,
+		hmacSha256Key:         opt.HmacSha256Key,
+
+		propagators: otel.GetTextMapPropagator(),
+		kafkaConf:   opt.KafkaConf,
+		kafkaBroker: opt.KafkaBroker,
 	}
 }

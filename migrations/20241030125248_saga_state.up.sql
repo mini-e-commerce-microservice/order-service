@@ -1,6 +1,6 @@
 CREATE TABLE saga_states
 (
-    id      uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    id      bigserial PRIMARY KEY,
     payload jsonb        not null,
     status  varchar(100) not null,
     step    jsonb        not null,

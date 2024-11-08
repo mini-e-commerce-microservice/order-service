@@ -21,9 +21,9 @@ type ProductItem struct {
 	Stock               int32                         `db:"stock" json:"stock"`
 	Sku                 *string                       `db:"sku" json:"sku"`
 	Weight              int32                         `db:"weight" json:"weight"`
-	PackageLength       float64                       `db:"package_length" json:"package_length"`
-	PackageWidth        float64                       `db:"package_width" json:"package_width"`
-	PackageHeight       float64                       `db:"package_height" json:"package_height"`
+	PackageLength       int32                         `db:"package_length" json:"package_length"`
+	PackageWidth        int32                         `db:"package_width" json:"package_width"`
+	PackageHeight       int32                         `db:"package_height" json:"package_height"`
 	DimensionalWeight   float64                       `db:"dimensional_weight" json:"dimensional_weight"`
 	IsActive            bool                          `db:"is_active" json:"is_active"`
 	ProductCondition    string                        `db:"product_condition" json:"product_condition"`

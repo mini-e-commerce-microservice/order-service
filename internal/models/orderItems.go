@@ -11,8 +11,8 @@ type OrderItem struct {
 	TotalPrice        float64 `db:"total_price" json:"total_price"`
 	Discount          float64 `db:"discount" json:"discount"`
 	Weight            int32   `db:"weight" json:"weight"`
-	PackageLength     float64 `db:"package_length" json:"package_length"`
-	PackageWidth      float64 `db:"package_width" json:"package_width"`
-	PackageHeight     float64 `db:"package_height" json:"package_height"`
+	PackageLength     int32   `db:"package_length" json:"package_length"`
+	PackageWidth      int32   `db:"package_width" json:"package_width"`
+	PackageHeight     int32   `db:"package_height" json:"package_height"`
 	DimensionalWeight float64 `db:"dimensional_weight" json:"dimensional_weight"`
 }

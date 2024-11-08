@@ -8,8 +8,11 @@ import (
 func main() {
 	rootCmd := &cobra.Command{}
 
-	rootCmd.AddCommand(consumerProductOutbox)
-	rootCmd.AddCommand(restApi)
+	rootCmd.AddCommand(
+		restApi,
+		consumerProductOutbox,
+		consumerPaymentResponse,
+	)
 
 	err := rootCmd.Execute()
 	collection.PanicIfErr(err)

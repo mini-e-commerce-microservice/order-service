@@ -50,19 +50,12 @@ components:
           type: string
           x-oapi-codegen-extra-tags:
             validate: "oneof='GP' 'QR' 'SP'"
-        shipping_address_id:
-          type: integer
-          format: int64
-          x-oapi-codegen-extra-tags:
-            validate: "required,min=1"
-        courier_code:
-          type: string
-          x-oapi-codegen-extra-tags:
-            validate: "required"
-        courier_service_code:
-          type: string
-          x-oapi-codegen-extra-tags:
-            validate: "required"
+        courier:
+          $ref: '#/components/schemas/V1OrderPostCourier'
+        origin:
+          $ref: '#/components/schemas/V1OrderPostLocation'
+        destination:
+          $ref: '#/components/schemas/V1OrderPostLocation'
         items:
           type: array
           items:
@@ -71,10 +64,105 @@ components:
             validate: "required,min=1,dive"
       required:
         - payment_method_code
-        - shipping_address_id
-        - courier_service_code
-        - courier_code
+        - courier
+        - origin
+        - destination
         - items
+    V1OrderPostCourier:
+      type: object
+      properties:
+        id:
+          type: string
+        available_for_cash_on_delivery:
+          type: boolean
+        available_for_proof_of_delivery:
+          type: boolean
+        available_for_instant_waybill_id:
+          type: boolean
+        available_for_insurance:
+          type: boolean
+        company:
+          type: string
+          example: "jne"
+        courier_name:
+          type: string
+          example: "JNE"
+        courier_code:
+          type: string
+          example: "jne"
+        courier_service_name:
+          type: string
+          example: "Yakin Esok Sampai (YES)"
+        courier_service_code:
+          type: string
+          example: "yes"
+        description:
+          type: string
+          example: "Yakin esok sampai"
+        duration:
+          type: string
+          example: "1 - 1 days"
+        shipment_duration_range:
+          type: string
+          example: "1 - 1"
+        shipment_duration_unit:
+          type: string
+          example: "days"
+        service_type:
+          type: string
+          example: "overnight"
+        shipping_type:
+          type: string
+          example: "parcel"
+        price:
+          type: number
+          format: double
+          example: 54000
+        type:
+          type: string
+          example: "yes"
+      required:
+        - id
+        - type
+        - price
+        - description
+        - courier_service_code
+        - available_for_cash_on_delivery
+        - available_for_insurance
+        - available_for_instant_waybill_id
+        - company
+        - courier_code
+        - courier_name
+        - courier_service_name
+        - courier_service_code
+        - available_for_proof_of_delivery
+        - duration
+        - service_type
+        - shipment_duration_range
+        - shipment_duration_unit
+        - shipping_type
+    V1OrderPostLocation:
+      type: object
+      properties:
+        location_id:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        address:
+          type: string
+        postal_code:
+          type: integer
+          format: int32
+      required:
+        - location_id
+        - latitude
+        - longitude
+        - postal_code
+        - address
     V1OrderPostItem:
       type: object
       properties:

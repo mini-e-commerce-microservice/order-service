@@ -14,7 +14,7 @@ func (r *repository) Create(ctx context.Context, input CreateInput) (err error) 
 		return collection.Err(repositories.ErrTxIsNil)
 	}
 
-	paylaodMarshal, err := json.Marshal(input.Data.Payload)
+	payloaddMarshal, err := json.Marshal(input.Data.Payload)
 	if err != nil {
 		return collection.Err(err)
 	}
@@ -24,8 +24,8 @@ func (r *repository) Create(ctx context.Context, input CreateInput) (err error) 
 		return collection.Err(err)
 	}
 
-	query := r.sq.Insert("saga_states").Columns("payload", "status", "step", "type", "version").
-		Values(string(paylaodMarshal), input.Data.Status, string(stepMarshal), input.Data.Type, input.Data.Version)
+	query := r.sq.Insert("saga_states").Columns("id", "payload", "status", "step", "type", "version").
+		Values(input.Data.ID, string(payloaddMarshal), input.Data.Status, string(stepMarshal), input.Data.Type, input.Data.Version)
 
 	_, err = input.Tx.ExecSq(ctx, query)
 	if err != nil {

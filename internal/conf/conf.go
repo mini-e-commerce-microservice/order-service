@@ -87,6 +87,22 @@ func LoadMinioConf() *secret_proto.Minio {
 	return minioConf
 }
 
+func LoadHmacSha256Key() *secret_proto.HmacSha256Key {
+	kafkaConf := &secret_proto.HmacSha256Key{}
+	if flag.Lookup("test.v") != nil {
+		err := faker.FakeData(&kafkaConf)
+		if err != nil {
+			panic(err)
+		}
+		return kafkaConf
+	}
+	err := openVaultClient("hmac-sha-256-key", "kv", kafkaConf)
+	if err != nil {
+		panic(err)
+	}
+	return kafkaConf
+}
+
 func LoadJwtConf() *secret_proto.Jwt {
 	jwtConf := &secret_proto.Jwt{}
 	if flag.Lookup("test.v") != nil {

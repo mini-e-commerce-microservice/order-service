@@ -2,7 +2,6 @@ CREATE TABLE orders
 (
     id                  bigserial primary key,
     user_id             bigint                   not null,
-    shipping_address_id bigint                   not null,
     status              varchar(100)             not null,
     total_amount        NUMERIC(10, 2)           not null,
     payment_status      varchar(100)             not null,

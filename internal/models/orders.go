@@ -1,11 +1,12 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Order struct {
 	ID                int64      `db:"id"`
 	UserID            int64      `db:"user_id"`
-	ShippingAddressID int64      `db:"shipping_address_id"`
 	Status            string     `db:"status"`
 	TotalAmount       float64    `db:"total_amount"`
 	PaymentStatus     string     `db:"payment_status"`
